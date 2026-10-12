@@ -1,0 +1,17 @@
+{
+  "name": "veo3-video-studio",
+  "version": "1.0.0",
+  "description": "Desktop video generator powered by Veo 3 / Veo 2 API with character consistency and multi-scene storyboard batching",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^33.4.11"
+  }
+}

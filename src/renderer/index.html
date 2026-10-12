@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Veo 3 Video Studio - Tạo Video Hàng Loạt 10-20 Phân Cảnh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark-theme">
+  <!-- Top App Navigation Bar -->
+  <header class="app-header">
+    <div class="header-brand">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="23 7 16 12 23 17 23 7"></polygon>
+          <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>VEO 3 VIDEO STUDIO</h1>
+        <span class="sub-badge">BATCH MULTI-SCENE GENERATOR</span>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-btn active" data-tab="tab-storyboard" id="nav-btn-storyboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+        Phân Cảnh (10-20 Scenes)
+        <span class="badge" id="badge-scene-count">10</span>
+      </button>
+      <button class="nav-btn" data-tab="tab-character" id="nav-btn-character">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Hồ Sơ Nhân Vật (DNA)
+      </button>
+      <button class="nav-btn" data-tab="tab-queue" id="nav-btn-queue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Hàng Đợi Batch Queue
+        <span class="badge badge-warning" id="badge-queue-status">Sẵn sàng</span>
+      </button>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <button class="btn btn-secondary" id="btn-open-project" title="Mở file dự án">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        Mở Dự Án
+      </button>
+      <button class="btn btn-secondary" id="btn-save-project" title="Lưu lại cấu hình & prompts">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Lưu Dự Án
+      </button>
+      <button class="btn btn-accent" id="btn-open-settings" title="Cài đặt Cookie Google Labs & API Veo 3">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>🍪 Nạp Cookie / Cài Đặt</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Workspace Area -->
+  <main class="app-workspace">
+
+    <!-- ================= TAB 1: STORYBOARD & SCENES ================= -->
+    <section class="tab-pane active" id="tab-storyboard">
+      
+      <!-- Storyboard Toolbar & Batch AI Generator -->
+      <div class="storyboard-toolbar">
+        <div class="toolbar-left">
+          <div class="project-info">
+            <input type="text" id="project-title-input" class="input-inline-title" value="Kịch Bản Veo 3: Nhiệm Vụ Đặc Biệt" placeholder="Đặt tên dự án...">
+            <span class="info-tag" id="summary-scenes-tag">10 phân cảnh</span>
+          </div>
+        </div>
+
+        <div class="toolbar-right">
+          <!-- Quick Preset Count -->
+          <div class="dropdown-group">
+            <span class="dropdown-label">Mẫu nhanh:</span>
+            <button class="btn btn-sm btn-outline" id="btn-preset-10">10 Cảnh</button>
+            <button class="btn btn-sm btn-outline" id="btn-preset-15">15 Cảnh</button>
+            <button class="btn btn-sm btn-outline" id="btn-preset-20">20 Cảnh</button>
+          </div>
+
+          <button class="btn btn-secondary" id="btn-launch-real-chrome" style="border-color:#3b82f6; color:#60a5fa;" title="Mở trình duyệt Google Chrome thật trên máy tính, lưu tài khoản và đăng nhập vĩnh viễn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>
+            🚀 Mở Chrome Thật (Lưu Nick Vĩnh Viễn)
+          </button>
+
+          <button class="btn btn-secondary" id="btn-flow-companion-storyboard" style="border-color:#8b5cf6; color:#c084fc;" title="Mở trình duyệt Google Flow có thanh công cụ tự động điền kịch bản">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            🌐 Mở Flow (Tự Động)
+          </button>
+
+          <button class="btn btn-primary" id="btn-modal-ai-script">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            Tạo Kịch Bản Tự Động (AI)
+          </button>
+
+          <button class="btn btn-accent" id="btn-add-scene">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Thêm Cảnh Mới
+          </button>
+        </div>
+      </div>
+
+      <!-- Character Consistency Sticky Banner -->
+      <div class="character-sync-bar">
+        <div class="sync-left">
+          <div class="char-avatar-mini" id="mini-char-avatar">
+            <span>👤</span>
+          </div>
+          <div class="char-sync-info">
+            <div class="char-sync-title">
+              <strong id="sync-char-name">Alex Vance</strong> 
+              <span class="badge badge-subtle" id="sync-char-style">Cinematic 8K Photorealistic</span>
+            </div>
+            <div class="char-sync-desc" id="sync-char-desc">Đồng bộ diện mạo, trang phục & phong cách nghệ thuật xuyên suốt toàn bộ phân cảnh.</div>
+          </div>
+        </div>
+        <div class="sync-right">
+          <label class="switch-control" title="Khi bật, Veo Studio tự động tiêm DNA nhân vật vào từng prompt phân cảnh">
+            <input type="checkbox" id="toggle-consistency" checked>
+            <span class="slider round"></span>
+            <span class="switch-label">Khóa Nhất Quán Nhân Vật</span>
+          </label>
+          <button class="btn btn-sm btn-secondary" id="btn-edit-char-shortcut">Sửa Nhân Vật</button>
+        </div>
+      </div>
+
+      <!-- Scenes Grid Board -->
+      <div class="storyboard-container">
+        <div class="scenes-grid" id="scenes-grid">
+          <!-- Dynamic Scene Cards will be rendered here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 2: CHARACTER PROFILE (DNA) ================= -->
+    <section class="tab-pane" id="tab-character">
+      <div class="character-studio-container">
+        <div class="character-studio-header">
+          <div>
+            <h2>Hồ Sơ Nhân Vật Nhất Quán (Master Character DNA)</h2>
+            <p class="subtitle">Cung cấp hình ảnh tham chiếu và mô tả chi tiết để Veo 3 giữ vững khuôn mặt, vóc dáng và trang phục qua 10-20 phân cảnh.</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-primary" id="btn-save-character-profile">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              Lưu Hồ Sơ
+            </button>
+          </div>
+        </div>
+
+        <div class="character-form-layout">
+          <!-- Left Column: Master Reference Image -->
+          <div class="char-image-card">
+            <h3>Ảnh Gốc Tham Chiếu (Reference Image)</h3>
+            <p class="helper-text">Ảnh chụp chân dung rõ mặt, ánh sáng tốt. Sẽ được truyền vào Veo 3 API dưới dạng Image Conditioning.</p>
+            
+            <div class="image-upload-box" id="char-image-dropzone">
+              <div class="image-preview-wrapper" id="char-image-preview-wrap" style="display:none;">
+                <img id="char-image-preview" src="" alt="Character Reference">
+                <button class="btn-remove-image" id="btn-remove-char-image" title="Xóa ảnh">&times;</button>
+              </div>
+              <div class="upload-placeholder" id="char-upload-placeholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Nhấn để chọn ảnh nhân vật (.png, .jpg, .webp)</span>
+                <small>Khuyến nghị tỉ lệ 16:9 hoặc 1:1 góc chính diện</small>
+              </div>
+            </div>
+            
+            <div class="char-image-actions">
+              <button class="btn btn-secondary btn-block" id="btn-choose-char-image">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Chọn Ảnh Từ Máy Tính
+              </button>
+              <div class="file-path-display" id="char-image-path-display">Chưa chọn ảnh</div>
+            </div>
+          </div>
+
+          <!-- Right Column: Visual Attributes Form -->
+          <div class="char-attributes-card">
+            <div class="form-row grid-2">
+              <div class="form-group">
+                <label for="char-name-input">Tên Nhân Vật *</label>
+                <input type="text" id="char-name-input" class="form-control" value="Alex Vance" placeholder="VD: Sarah Connor, Linh Tran...">
+              </div>
+              <div class="form-group">
+                <label for="char-gender-input">Giới Tính & Độ Tuổi</label>
+                <input type="text" id="char-gender-input" class="form-control" value="Nam, 28 tuổi, vóc dáng điệp viên thể thao" placeholder="VD: Nữ, 25 tuổi...">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="char-appearance-input">Đặc Điểm Khuôn Mặt & Thể Hình (Physical Appearance)</label>
+              <textarea id="char-appearance-input" class="form-control" rows="2" placeholder="VD: Tóc đen ngắn vuốt ngược, mắt nâu sắc sảo, sóng mũi cao, râu quai nón tỉa gọn, cằm vuông kiên nghị...">Tóc ngắn cắt fade hiện đại, đôi mắt xám sắc sảo, vóc dáng săn chắc, khuôn mặt góc cạnh nam tính.</textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="char-outfit-input">Trang Phục Đặc Trưng (Consistent Outfit)</label>
+              <textarea id="char-outfit-input" class="form-control" rows="2" placeholder="VD: Áo khoác da đen cyberpunk, quần rằn ri, ủng bọc thép...">Áo khoác bomber công nghệ màu xám than viền phản quang, áo thun đen ôm sát, găng tay chiến thuật và đồng hồ số thông minh.</textarea>
+            </div>
+
+            <div class="form-row grid-2">
+              <div class="form-group">
+                <label for="char-art-style-select">Phong Cách Nghệ Thuật (Art Style)</label>
+                <select id="char-art-style-select" class="form-control">
+                  <option value="Cinematic 8K, photorealistic, anamorphic lens, 35mm film grain, moody cinematic lighting">Cinematic 8K Điện Ảnh Siêu Thực (Khuyên dùng)</option>
+                  <option value="Cyberpunk neon style, high contrast, volumetric smoke, rain reflections, futuristic">Cyberpunk Neon Thành Phố Tương Lai</option>
+                  <option value="Hyper-realistic documentary style, natural daylight, candid authentic motion">Tài Liệu Chân Thực (Documentary Raw)</option>
+                  <option value="Anime Makoto Shinkai style, vibrant colors, lush sky, aesthetic lighting">Anime Hoạt Hình Chi Tiết Cao</option>
+                  <option value="Disney Pixar 3D animated feature film style, soft subsurface scattering, vibrant">Hoạt Hình 3D Pixar / DreamWorks</option>
+                  <option value="Dark Fantasy gothic cinematic, moody fog, candlelight, dramatic shadows">Dark Fantasy Huyền Bí Cổ Điển</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="char-aspect-ratio-select">Tỉ Lệ Khung Hình Mặc Định</label>
+                <select id="char-aspect-ratio-select" class="form-control">
+                  <option value="16:9">16:9 (Ngang - Youtube / TV / Phim ảnh)</option>
+                  <option value="9:16">9:16 (Dọc - TikTok / Reels / Shorts)</option>
+                  <option value="1:1">1:1 (Vuông - Instagram / Post)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="char-negative-prompt">Negative Prompt (Những thứ cần loại bỏ)</label>
+              <textarea id="char-negative-prompt" class="form-control mono" rows="2">blurry, deformed, distorted face, extra limbs, bad anatomy, text, watermark, changing clothes, inconsistent face, low quality, glitch, mutated hands</textarea>
+            </div>
+
+            <div class="prompt-preview-box">
+              <label>Xem trước đoạn Prompt DNA tiêm vào mỗi cảnh:</label>
+              <div class="preview-text" id="dna-preview-text">Đang tải cấu trúc prompt...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 3: BATCH QUEUE & RENDER HUB ================= -->
+    <section class="tab-pane" id="tab-queue">
+      <div class="queue-hub-container">
+        <!-- Render Control Bar -->
+        <div class="render-control-card">
+          <div class="render-control-header">
+            <div>
+              <h2>Trung Tâm Tạo Video Hàng Loạt (Batch Render Hub)</h2>
+              <p class="subtitle">Thực hiện tạo liên tiếp 10 đến 20 video bằng Google Veo 3 API với cơ chế tự động Polling và tải về máy tính.</p>
+            </div>
+            
+            <div class="render-buttons">
+              <button class="btn btn-danger" id="btn-stop-batch" style="display:none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12"/></svg>
+                Dừng Quá Trình
+              </button>
+              
+              <button class="btn btn-secondary" id="btn-launch-real-chrome-queue" style="border-color:#3b82f6; color:#60a5fa; font-weight: 600;" title="Mở trình duyệt Google Chrome thật trên máy tính, lưu tài khoản và đăng nhập vĩnh viễn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>
+                🚀 Mở Chrome Thật (Lưu Nick)
+              </button>
+
+              <button class="btn btn-secondary" id="btn-open-export-folder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                Mở Thư Mục Video
+              </button>
+
+              <button class="btn btn-glow-primary" id="btn-start-batch" style="padding: 10px 22px; font-weight: 700; background: linear-gradient(135deg, #10b981, #2563eb);">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                ⚡ BẮT ĐẦU CHẠY TỰ ĐỘNG TRÊN CHROME (10-20 CẢNH)
+              </button>
+            </div>
+          </div>
+
+          <!-- Progress summary -->
+          <div class="render-progress-section">
+            <div class="progress-stats">
+              <div class="stat-item">
+                <span class="stat-label">Tổng Phân Cảnh:</span>
+                <strong class="stat-val" id="stat-total-scenes">10</strong>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Đã Hoàn Thành:</span>
+                <strong class="stat-val text-success" id="stat-completed-scenes">0</strong>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Đang Xử Lý:</span>
+                <strong class="stat-val text-warning" id="stat-active-scenes">0</strong>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Thời Gian Đã Chạy:</span>
+                <strong class="stat-val font-mono" id="stat-elapsed-time">00:00</strong>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Chế Độ:</span>
+                <strong class="stat-val" id="stat-mode-badge"><span class="badge badge-info">Veo 3 AI</span></strong>
+              </div>
+            </div>
+
+            <!-- Big Progress Bar -->
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" id="batch-progress-bar" style="width: 0%;"></div>
+            </div>
+            <div class="progress-caption" id="batch-progress-caption">Sẵn sàng để bắt đầu hàng đợi</div>
+          </div>
+        </div>
+
+        <!-- Two Columns: Queue Table + Live Log Console -->
+        <div class="queue-split-grid">
+          <!-- Left: Scene List Status Table -->
+          <div class="queue-table-card">
+            <h3>Danh Sách Phân Cảnh Chờ Render</h3>
+            <div class="table-scroll-wrap">
+              <table class="queue-table">
+                <thead>
+                  <tr>
+                    <th>STT</th>
+                    <th>Tiêu Đề & Góc Quay</th>
+                    <th>Thời Lượng</th>
+                    <th>Trạng Thái</th>
+                    <th>Hành Động</th>
+                  </tr>
+                </thead>
+                <tbody id="queue-table-body">
+                  <!-- Dynamic rows -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Right: Live Terminal Log Console -->
+          <div class="log-console-card">
+            <div class="console-header">
+              <div class="console-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                Nhật Ký Thực Thi (Live API Logger)
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <button class="btn btn-sm btn-outline" id="btn-copy-logs" title="Sao chép toàn bộ log để gửi hỗ trợ">📋 Copy Log</button>
+                <button class="btn btn-sm btn-ghost" id="btn-clear-logs">Xóa log</button>
+              </div>
+            </div>
+            <div class="console-body" id="console-logs">
+              <div class="log-line text-muted">[System] Veo 3 Video Studio đã khởi động sẵn sàng.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= MODAL 1: AI SCRIPT GENERATOR ================= -->
+  <div class="modal-backdrop" id="modal-ai-script" style="display:none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Tạo Tự Động Kịch Bản 10 - 20 Phân Cảnh
+        </h3>
+        <button class="modal-close-btn" id="btn-close-modal-script">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">Nhập chủ đề cốt truyện hoặc ý tưởng video. Công cụ sẽ tự động phân rã thành các phân cảnh điện ảnh với góc máy, ánh sáng và hành động nhân vật nhất quán.</p>
+        
+        <div class="form-group">
+          <label for="ai-script-topic">Chủ Đề Cốt Truyện / Ý Tưởng Video *</label>
+          <textarea id="ai-script-topic" class="form-control" rows="3" placeholder="VD: Điệp viên thâm nhập vào tòa tháp công nghệ cao trong đêm mưa để thu hồi viên ngọc năng lượng...">Điệp viên truy tìm dữ liệu tuyệt mật tại trung tâm thành phố tương lai rực rỡ ánh đèn neon, đối đầu với hệ thống bảo mật và tẩu thoát thành công.</textarea>
+        </div>
+
+        <div class="form-row grid-2">
+          <div class="form-group">
+            <label for="ai-script-count">Số Lượng Phân Cảnh Cần Tạo</label>
+            <select id="ai-script-count" class="form-control">
+              <option value="10" selected>10 Phân Cảnh (Tiêu chuẩn)</option>
+              <option value="12">12 Phân Cảnh</option>
+              <option value="15">15 Phân Cảnh (Mở rộng)</option>
+              <option value="20">20 Phân Cảnh (Toàn diện)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="ai-script-engine">Phương Thức Tạo</label>
+            <select id="ai-script-engine" class="form-control">
+              <option value="ai">AI Generative (Dùng Gemini AI thông minh)</option>
+              <option value="procedural">Mẫu Kịch Bản Điện Ảnh Tức Thì (Không tốn token)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btn-cancel-modal-script">Hủy</button>
+        <button class="btn btn-primary" id="btn-execute-ai-script">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          Phân Rã & Tạo Phân Cảnh Ngay
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL 2: SETTINGS (API KEY & CONFIG) ================= -->
+  <div class="modal-backdrop" id="modal-settings" style="display:none;">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Cấu Hình Google Veo 3 API & Môi Trường
+        </h3>
+        <button class="modal-close-btn" id="btn-close-modal-settings">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- Demo Mode Notice -->
+        <div class="settings-highlight-card">
+          <div class="highlight-info">
+            <strong>Chế Độ Thử Nghiệm / Demo Mode</strong>
+            <p>Cho phép chạy thử toàn bộ quy trình 10-20 phân cảnh, hàng đợi và tải video mẫu mà không tiêu tốn hạn ngạch Veo API.</p>
+          </div>
+          <label class="switch-control">
+            <input type="checkbox" id="setting-demo-mode">
+            <span class="slider round"></span>
+          </label>
+        </div>
+
+        <!-- Segmented Mode Switch: Real Chrome vs API Key -->
+        <div class="form-group">
+          <label style="font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 8px;">Phương Thức Tạo Video Veo 3:</label>
+          <div style="display: flex; gap: 12px; margin-bottom: 8px;">
+            <button type="button" class="btn btn-primary" id="btn-tab-chrome-mode" style="flex: 1; padding: 12px; font-size: 13px; font-weight: 700;">
+              🚀 Google Chrome Thật (Tự Động 100%)
+            </button>
+            <button type="button" class="btn btn-secondary" id="btn-tab-api-mode" style="flex: 1; padding: 12px; font-size: 13px;">
+              🔑 Google API Key (AI Studio)
+            </button>
+          </div>
+          <!-- Hidden select to keep state compatible -->
+          <select id="setting-endpoint-type" style="display: none;">
+            <option value="real_chrome" selected>real_chrome</option>
+            <option value="ai_studio">ai_studio</option>
+            <option value="labs_cookie">labs_cookie</option>
+            <option value="vertex">vertex</option>
+          </select>
+        </div>
+
+        <!-- Google Chrome Thật Box (New Default) -->
+        <div class="form-group" id="group-chrome-mode" style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 8px; padding: 16px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <strong style="color: #10b981; font-size: 14px;">Trình Duyệt Chrome Thật (Hồ Sơ Lưu Vĩnh Viễn)</strong>
+            <span class="badge badge-success">Khuyên Dùng</span>
+          </div>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+            Trình duyệt Google Chrome thật chạy với hồ sơ <code>GoogleFlow_ChromeProfile</code> độc lập. Đăng nhập Google 1 lần, mọi dữ liệu & tài khoản được lưu vĩnh viễn trên máy tính không lo bị thoát. Hàng đợi tự động gửi lệnh tạo 10-20 cảnh trực tiếp!
+          </p>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <button type="button" class="btn btn-primary" id="btn-modal-launch-chrome" style="background: linear-gradient(135deg, #10b981, #059669); font-weight: 600;">
+              🚀 Mở Trình Duyệt Chrome Thật
+            </button>
+            <span id="chrome-status-badge" style="font-size: 12px; color: #94a3b8;">Đang kiểm tra cổng 9222...</span>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label for="setting-model-name">Model Veo</label>
+          <select id="setting-model-name" class="form-control">
+            <option value="veo-3.1-generate-preview" selected>veo-3.1-generate-preview (Veo 3.1 Mới Nhất)</option>
+            <option value="veo-3.1-fast-generate-preview">veo-3.1-fast-generate-preview (Veo 3.1 Nhanh)</option>
+            <option value="veo-3.0-generate-001">veo-3.0-generate-001 (Veo 3.0 Tiên tiến)</option>
+            <option value="veo-3.0-generate-preview">veo-3.0-generate-preview (Veo 3.0 Preview)</option>
+          </select>
+        </div>
+
+        <!-- Google AI Studio Key -->
+        <div class="form-group" id="group-api-key" style="display:none;">
+          <label for="setting-api-key">Google API Key *</label>
+          <div class="input-with-action">
+            <input type="password" id="setting-api-key" class="form-control font-mono" placeholder="AIzaSy...">
+            <button class="btn btn-secondary" id="btn-toggle-key-visibility">Hiện</button>
+            <button class="btn btn-accent" id="btn-test-models" title="Kiểm tra các model API Key này có quyền truy cập">Kiểm Tra Model</button>
+          </div>
+          <small class="helper-text">Lấy API key tại <a href="https://aistudio.google.com/" target="_blank">Google AI Studio</a>. Nhấn "Kiểm Tra Model" để xem tài khoản của bạn đã được cấp quyền Veo chưa.</small>
+          <div id="api-models-result" style="margin-top: 8px; font-size: 12px; display: none;"></div>
+        </div>
+
+        <!-- Hidden Cookie field for backward compatibility -->
+        <textarea id="setting-labs-cookie" style="display: none;"></textarea>
+
+        <!-- Vertex AI options (hidden by default) -->
+        <div class="form-row grid-2" id="group-vertex" style="display:none;">
+          <div class="form-group">
+            <label for="setting-vertex-project">Vertex Project ID</label>
+            <input type="text" id="setting-vertex-project" class="form-control" placeholder="my-gcp-project-id">
+          </div>
+          <div class="form-group">
+            <label for="setting-vertex-location">Vertex Location</label>
+            <input type="text" id="setting-vertex-location" class="form-control" value="us-central1">
+          </div>
+        </div>
+
+        <!-- Export Directory -->
+        <div class="form-group">
+          <label for="setting-export-dir">Thư Mục Xuất Video (Output Directory)</label>
+          <div class="input-with-action">
+            <input type="text" id="setting-export-dir" class="form-control" readonly>
+            <button class="btn btn-secondary" id="btn-browse-export-dir">Chọn thư mục</button>
+          </div>
+        </div>
+
+        <div class="form-row grid-2">
+          <div class="form-group">
+            <label for="setting-batch-delay">Khoảng Nghỉ Giữa Các Cảnh (Giây)</label>
+            <input type="number" id="setting-batch-delay" class="form-control" value="5" min="1" max="60">
+            <small class="helper-text">Giảm tải và hạn chế lỗi Rate Limit (HTTP 429) của Google.</small>
+          </div>
+          <div class="form-group">
+            <label for="setting-default-style">Phong Cách Nghệ Thuật Mặc Định</label>
+            <input type="text" id="setting-default-style" class="form-control" value="Cinematic 8K, photorealistic, anamorphic lens, high fidelity">
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btn-cancel-settings">Đóng</button>
+        <button class="btn btn-primary" id="btn-save-settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Lưu Cấu Hình
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL 3: FULL VIDEO PLAYER ================= -->
+  <div class="modal-backdrop" id="modal-video-player" style="display:none;">
+    <div class="modal-dialog modal-video">
+      <div class="modal-header">
+        <h3 id="video-modal-title">Phát Video Phân Cảnh</h3>
+        <button class="modal-close-btn" id="btn-close-modal-video">&times;</button>
+      </div>
+      <div class="modal-body text-center">
+        <div class="video-player-container">
+          <video id="modal-video-element" controls autoplay loop></video>
+        </div>
+        <div class="video-modal-info">
+          <p id="video-modal-prompt" class="font-mono"></p>
+          <div class="video-modal-actions">
+            <button class="btn btn-secondary" id="btn-modal-open-folder">Mở Thư Mục Chứa</button>
+            <button class="btn btn-primary" id="btn-modal-open-system">Mở Trong Media Player</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -13,5 +13,8 @@
   "type": "commonjs",
   "devDependencies": {
     "electron": "^33.4.11"
+  },
+  "dependencies": {
+    "ws": "^8.22.0"
   }
 }

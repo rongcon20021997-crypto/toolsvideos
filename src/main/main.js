@@ -205,15 +205,17 @@ ipcMain.handle('script:generate-scenes', async (_, params) => {
       count: params.count || 10,
       topic: params.topic,
       characterProfile: params.characterProfile,
-      model: params.model || 'gemini-1.5-flash'
+      model: params.model || 'gemini-3.1-flash-lite',
+      voiceGender: params.voiceGender || 'male_vi'
     });
   } else {
     return scriptGenerator.generateProceduralScenes({
       count: params.count || 10,
       topic: params.topic,
-      characterName: params.characterProfile?.name || 'Nhân vật chính',
-      characterOutfit: params.characterProfile?.outfit || 'áo khoác điện ảnh đặc trưng',
-      artStyle: params.characterProfile?.artStyle || settings.defaultArtStyle
+      characterName: params.characterProfile?.name || 'Đầu bếp',
+      characterOutfit: params.characterProfile?.outfit || 'tạp dề chuyên nghiệp',
+      artStyle: params.characterProfile?.artStyle || settings.defaultArtStyle,
+      voiceGender: params.voiceGender || 'male_vi'
     });
   }
 });
@@ -344,8 +346,21 @@ ipcMain.handle('chrome:check-alive', async () => {
   return await chromeLauncher.checkIsAlive();
 });
 
-ipcMain.handle('chrome:inject-prompt', async (_, fullPrompt) => {
-  return await chromeLauncher.injectPromptToChrome(fullPrompt);
+ipcMain.handle('chrome:get-status', async () => {
+  return await chromeLauncher.getFlowStatus();
 });
+
+ipcMain.handle('chrome:create-project', async () => {
+  return await chromeLauncher.createFlowProject();
+});
+
+ipcMain.handle('chrome:setup-character', async (_, characterData) => {
+  return await chromeLauncher.setupFlowCharacter(characterData);
+});
+
+ipcMain.handle('chrome:inject-prompt', async (_, input) => {
+  return await chromeLauncher.injectPromptToChrome(input);
+});
+
 
 

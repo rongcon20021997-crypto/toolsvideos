@@ -114,6 +114,7 @@ const DOM = {
   aiScriptTopic: document.getElementById('ai-script-topic'),
   aiScriptCount: document.getElementById('ai-script-count'),
   aiScriptEngine: document.getElementById('ai-script-engine'),
+  aiScriptVoice: document.getElementById('ai-script-voice'),
 
   modalSettings: document.getElementById('modal-settings'),
   btnOpenSettings: document.getElementById('btn-open-settings'),
@@ -162,7 +163,29 @@ const DOM = {
 
   // Real Google Chrome (Persistent Profile)
   btnLaunchRealChrome: document.getElementById('btn-launch-real-chrome'),
-  btnLaunchRealChromeQueue: document.getElementById('btn-launch-real-chrome-queue')
+  btnLaunchRealChromeQueue: document.getElementById('btn-launch-real-chrome-queue'),
+
+  // Step-by-Step Interactive Workflow Elements
+  btnStepOpenChrome: document.getElementById('btn-step-open-chrome'),
+  btnStepCreateProject: document.getElementById('btn-step-create-project'),
+  btnStepSetupCharacter: document.getElementById('btn-step-setup-character'),
+  btnStepRenderScene1: document.getElementById('btn-step-render-scene-1'),
+  btnStepRenderNext: document.getElementById('btn-step-render-next'),
+  btnRefreshFlowStatus: document.getElementById('btn-refresh-flow-status'),
+  badgeStep1: document.getElementById('badge-step-1'),
+  badgeStep2: document.getElementById('badge-step-2'),
+  badgeStep3: document.getElementById('badge-step-3'),
+  badgeStep4: document.getElementById('badge-step-4'),
+  boxStep1: document.getElementById('box-step-1'),
+  boxStep2: document.getElementById('box-step-2'),
+  boxStep3: document.getElementById('box-step-3'),
+  boxStep4: document.getElementById('box-step-4'),
+  numStep1: document.getElementById('num-step-1'),
+  numStep2: document.getElementById('num-step-2'),
+  numStep3: document.getElementById('num-step-3'),
+  numStep4: document.getElementById('num-step-4'),
+  flowOverallStatusBadge: document.getElementById('flow-overall-status-badge'),
+  stepWorkflowMsg: document.getElementById('step-workflow-msg')
 };
 
 // ==================== INITIALIZATION ==================== //
@@ -211,6 +234,8 @@ async function initApp() {
   }
 
   logToConsole('Veo 3 Video Studio đã sẵn sàng! Đã nạp 10 phân cảnh mẫu.', 'info');
+  checkFlowRealtimeStatus(false);
+  setInterval(() => checkFlowRealtimeStatus(false), 8000);
 }
 
 // Generate default template of 10, 15, or 20 scenes
@@ -375,6 +400,17 @@ function bindEvents() {
     DOM.modalAiScript.style.display = 'none';
   });
   DOM.btnExecuteAiScript.addEventListener('click', executeAiScriptGeneration);
+
+  // Quick Topic Suggestions
+  document.querySelectorAll('.btn-quick-topic').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const topic = btn.getAttribute('data-topic');
+      if (topic) {
+        DOM.aiScriptTopic.value = topic;
+        showToast('Đã chọn gợi ý: ' + btn.textContent.trim(), 'info');
+      }
+    });
+  });
 
   // Settings Modal
   DOM.btnOpenSettings.addEventListener('click', () => {
@@ -552,6 +588,288 @@ function bindEvents() {
   // Real Google Chrome (Persistent Profile)
   DOM.btnLaunchRealChrome?.addEventListener('click', launchRealGoogleChrome);
   DOM.btnLaunchRealChromeQueue?.addEventListener('click', launchRealGoogleChrome);
+
+  // Step-by-Step Interactive Workflow
+  DOM.btnStepOpenChrome?.addEventListener('click', handleStep1OpenChrome);
+  DOM.btnStepCreateProject?.addEventListener('click', handleStep2CreateProject);
+  DOM.btnStepSetupCharacter?.addEventListener('click', handleStep3SetupCharacter);
+  DOM.btnStepRenderScene1?.addEventListener('click', () => handleStep4RenderScene(1));
+  DOM.btnStepRenderNext?.addEventListener('click', handleStep4RenderNextScene);
+  DOM.btnRefreshFlowStatus?.addEventListener('click', () => checkFlowRealtimeStatus(true));
+}
+
+// ==================== STEP-BY-STEP WORKFLOW HANDLERS ==================== //
+
+async function checkFlowRealtimeStatus(showNotification = false) {
+  if (!window.electronAPI || !window.electronAPI.getFlowStatus) return;
+  try {
+    const status = await window.electronAPI.getFlowStatus();
+    updateStepWorkflowUIFromStatus(status);
+    if (showNotification) {
+      if (!status.chromeAlive) {
+        showToast('Chrome chưa chạy. Hãy bấm "1. Mở Trình Duyệt"!', 'warning');
+      } else if (!status.flowTabFound) {
+        showToast('Chrome đang mở nhưng chưa thấy tab Google Flow. Hãy mở tab labs.google/fx/tools/flow!', 'info');
+      } else if (status.isInProject) {
+        showToast('✓ Chrome đã kết nối và đang ở trong dự án Google Flow!', 'success');
+      } else {
+        showToast('✓ Chrome đã kết nối! Bạn đang ở trang chủ Google Flow.', 'info');
+      }
+    }
+  } catch (err) {
+    console.warn('Lỗi kiểm tra trạng thái Flow:', err);
+  }
+}
+
+function updateStepWorkflowUIFromStatus(status) {
+  if (!status || !DOM.badgeStep1) return;
+
+  if (status.chromeAlive) {
+    DOM.badgeStep1.textContent = '✓ Đã mở';
+    DOM.badgeStep1.className = 'badge badge-success';
+    DOM.boxStep1?.classList.add('completed-step');
+    DOM.boxStep1?.classList.remove('active-step');
+
+    DOM.flowOverallStatusBadge.textContent = '🟢 Chrome đã kết nối';
+    DOM.flowOverallStatusBadge.className = 'badge badge-success';
+
+    if (status.isInProject) {
+      DOM.badgeStep2.textContent = '✓ Đã trong dự án';
+      DOM.badgeStep2.className = 'badge badge-success';
+      DOM.boxStep2?.classList.add('completed-step');
+      DOM.boxStep2?.classList.remove('active-step');
+
+      const hasChar = Boolean(state.project.characterProfile.referenceImage || state.project.characterProfile.name);
+      if (hasChar && DOM.badgeStep3 && DOM.badgeStep3.textContent.includes('✓')) {
+        DOM.boxStep3?.classList.add('completed-step');
+        DOM.boxStep4?.classList.add('active-step');
+        DOM.stepWorkflowMsg.innerHTML = '👉 <strong>Bước 4:</strong> Dự án & Nhân vật đã sẵn sàng! Hãy nhấn <strong>"⚡ Thử Tạo Cảnh 1"</strong> để bắt đầu tạo video!';
+      } else {
+        DOM.boxStep3?.classList.add('active-step');
+        DOM.stepWorkflowMsg.innerHTML = '👉 <strong>Bước 3:</strong> Hãy nhấn <strong>"🎭 Bấm Gắn Nhân Vật"</strong> để gắn hình và thông tin nhân vật vào Flow!';
+      }
+    } else {
+      DOM.badgeStep2.textContent = 'Chờ tạo';
+      DOM.badgeStep2.className = 'badge badge-warning';
+      DOM.boxStep2?.classList.add('active-step');
+      DOM.boxStep2?.classList.remove('completed-step');
+      DOM.stepWorkflowMsg.innerHTML = '👉 <strong>Bước 2:</strong> Hãy nhấn <strong>"➕ Bấm Tạo Dự Án"</strong> để tự động tạo/mở dự án trên Google Flow!';
+    }
+  } else {
+    DOM.badgeStep1.textContent = 'Chưa mở';
+    DOM.badgeStep1.className = 'badge badge-subtle';
+    DOM.boxStep1?.classList.remove('completed-step');
+    DOM.boxStep1?.classList.add('active-step');
+    DOM.boxStep2?.classList.remove('completed-step', 'active-step');
+    DOM.boxStep3?.classList.remove('completed-step', 'active-step');
+    DOM.boxStep4?.classList.remove('completed-step', 'active-step');
+
+    DOM.flowOverallStatusBadge.textContent = 'Chưa mở Chrome';
+    DOM.flowOverallStatusBadge.className = 'badge badge-subtle';
+    DOM.stepWorkflowMsg.innerHTML = '👉 <strong>Bước 1:</strong> Hãy bấm nút <strong>"🚀 Bấm Mở Trình Duyệt"</strong> để khởi động Google Chrome thật!';
+  }
+}
+
+// BƯỚC 1: Mở trình duyệt Chrome
+async function handleStep1OpenChrome() {
+  if (!DOM.btnStepOpenChrome) return;
+  DOM.btnStepOpenChrome.disabled = true;
+  DOM.btnStepOpenChrome.textContent = '⏳ Đang mở...';
+  DOM.badgeStep1.textContent = 'Đang khởi động...';
+  DOM.badgeStep1.className = 'badge badge-info pulse-dot';
+  DOM.stepWorkflowMsg.innerHTML = '⏳ Đang khởi động Google Chrome thật với hồ sơ lưu nick vĩnh viễn...';
+
+  try {
+    await launchRealGoogleChrome();
+    DOM.badgeStep1.textContent = '✓ Đã mở';
+    DOM.badgeStep1.className = 'badge badge-success';
+    DOM.boxStep1?.classList.add('completed-step');
+    DOM.boxStep1?.classList.remove('active-step');
+
+    DOM.boxStep2?.classList.add('active-step');
+    DOM.stepWorkflowMsg.innerHTML = '👉 <strong>Bước 2:</strong> Hãy nhấn <strong>"➕ Bấm Tạo Dự Án"</strong> để tự động mở dự án mới trên Google Flow!';
+
+    setTimeout(() => checkFlowRealtimeStatus(false), 2500);
+  } catch (err) {
+    DOM.badgeStep1.textContent = '✗ Lỗi';
+    DOM.badgeStep1.className = 'badge badge-danger';
+    showToast('Lỗi mở Chrome: ' + err.message, 'error');
+    DOM.stepWorkflowMsg.innerHTML = `✗ Lỗi mở Chrome: ${err.message}`;
+  } finally {
+    DOM.btnStepOpenChrome.disabled = false;
+    DOM.btnStepOpenChrome.textContent = '🚀 Bấm Mở Trình Duyệt';
+  }
+}
+
+// BƯỚC 2: Tạo dự án mới trên Google Flow
+async function handleStep2CreateProject() {
+  if (!window.electronAPI || !window.electronAPI.createFlowProject) return;
+
+  DOM.btnStepCreateProject.disabled = true;
+  DOM.btnStepCreateProject.textContent = '⏳ Đang tạo...';
+  DOM.badgeStep2.textContent = 'Đang thao tác...';
+  DOM.badgeStep2.className = 'badge badge-info pulse-dot';
+  DOM.stepWorkflowMsg.innerHTML = '⏳ Đang tìm và bấm nút "Dự án mới" trên tab Google Flow...';
+
+  try {
+    const res = await window.electronAPI.createFlowProject();
+    if (res && res.success) {
+      DOM.badgeStep2.textContent = '✓ Đã tạo dự án';
+      DOM.badgeStep2.className = 'badge badge-success';
+      DOM.boxStep2?.classList.add('completed-step');
+      DOM.boxStep2?.classList.remove('active-step');
+
+      DOM.boxStep3?.classList.add('active-step');
+      DOM.stepWorkflowMsg.innerHTML = '👉 <strong>Bước 3:</strong> Đã mở dự án thành công! Giờ hãy bấm <strong>"🎭 Bấm Gắn Nhân Vật"</strong> để nạp thông tin & ảnh nhân vật!';
+      showToast('✓ ' + (res.message || 'Đã tạo/mở dự án thành công trên Google Flow!'), 'success');
+      logToConsole('✓ ' + (res.message || 'Đã tạo/mở dự án thành công trên Google Flow!'), 'success');
+
+      setTimeout(() => checkFlowRealtimeStatus(false), 2000);
+    } else if (res && res.needsLogin) {
+      DOM.badgeStep2.textContent = '⚠️ Cần đăng nhập';
+      DOM.badgeStep2.className = 'badge badge-warning';
+      DOM.stepWorkflowMsg.innerHTML = '⚠️ <strong>Chú ý:</strong> Vui lòng bấm Đăng Nhập tài khoản Google trên cửa sổ Chrome, sau đó bấm lại nút này!';
+      showToast('Vui lòng đăng nhập Google trên Chrome rồi thử lại!', 'warning');
+      logToConsole('⚠️ Bạn chưa đăng nhập tài khoản Google trên Chrome. Hãy bấm Đăng Nhập trên Chrome rồi thử lại.', 'warning');
+    } else {
+      DOM.badgeStep2.textContent = 'Chưa xong';
+      DOM.badgeStep2.className = 'badge badge-warning';
+      DOM.stepWorkflowMsg.innerHTML = `⚠️ ${res?.message || 'Chưa thấy nút tạo dự án. Bạn có thể tự bấm Tạo dự án trên Chrome rồi tiếp tục Bước 3!'}`;
+      showToast(res?.message || 'Không tìm thấy nút tạo dự án trên trang hiện tại', 'warning');
+      logToConsole('⚠️ ' + (res?.message || 'Không tìm thấy nút tạo dự án'), 'warning');
+    }
+  } catch (err) {
+    DOM.badgeStep2.textContent = '✗ Lỗi';
+    DOM.badgeStep2.className = 'badge badge-danger';
+    showToast('Lỗi tạo dự án: ' + err.message, 'error');
+    DOM.stepWorkflowMsg.innerHTML = `✗ Lỗi tạo dự án: ${err.message}. Hãy kiểm tra xem tab Chrome đã mở Flow chưa.`;
+    logToConsole('Lỗi tạo dự án: ' + err.message, 'error');
+  } finally {
+    DOM.btnStepCreateProject.disabled = false;
+    DOM.btnStepCreateProject.textContent = '➕ Bấm Tạo Dự Án';
+  }
+}
+
+// BƯỚC 3: Gắn hình nhân vật & thông tin nhân vật
+async function handleStep3SetupCharacter() {
+  if (!window.electronAPI || !window.electronAPI.setupFlowCharacter) return;
+
+  const char = state.project.characterProfile;
+
+  // Nếu người dùng chưa chọn ảnh nhân vật, tự động mở cửa sổ chọn ảnh
+  if (!char.referenceImage && window.electronAPI.selectImage) {
+    showToast('Hãy chọn ảnh chân dung nhân vật từ máy tính của bạn...', 'info');
+    const pickRes = await window.electronAPI.selectImage('Chọn ảnh nhân vật (Master Reference)');
+    if (pickRes && pickRes.filePath) {
+      char.referenceImage = pickRes.filePath;
+      char.referenceImageDataUrl = pickRes.dataUrl;
+      updateCharacterUI();
+      showToast('✓ Đã chọn ảnh: ' + pickRes.fileName, 'success');
+    }
+  }
+
+  DOM.btnStepSetupCharacter.disabled = true;
+  DOM.btnStepSetupCharacter.textContent = '⏳ Đang gắn...';
+  DOM.badgeStep3.textContent = 'Đang xử lý...';
+  DOM.badgeStep3.className = 'badge badge-info pulse-dot';
+  DOM.stepWorkflowMsg.innerHTML = `⏳ Đang mở mục Nhân vật và gửi thông tin "${char.name || 'Alex Vance'}" ${char.referenceImage ? 'cùng ảnh chân dung ' : ''}lên Google Flow...`;
+
+  try {
+    const res = await window.electronAPI.setupFlowCharacter({
+      name: char.name,
+      appearance: char.appearance,
+      outfit: char.outfit,
+      artStyle: char.artStyle,
+      imagePath: char.referenceImage
+    });
+
+    if (res && res.success) {
+      DOM.badgeStep3.textContent = '✓ Đã gắn';
+      DOM.badgeStep3.className = 'badge badge-success';
+      DOM.boxStep3?.classList.add('completed-step');
+      DOM.boxStep3?.classList.remove('active-step');
+
+      DOM.boxStep4?.classList.add('active-step');
+      DOM.stepWorkflowMsg.innerHTML = '👉 <strong>Bước 4:</strong> Nhân vật đã sẵn sàng! Bây giờ hãy bấm <strong>"⚡ Thử Tạo Cảnh 1"</strong> để bắt đầu kiểm tra video đầu tiên!';
+      showToast('✓ ' + res.message, 'success');
+      logToConsole('✓ ' + res.message, 'success');
+    } else {
+      DOM.badgeStep3.textContent = '⚠️ Thử lại';
+      DOM.badgeStep3.className = 'badge badge-warning';
+      DOM.stepWorkflowMsg.innerHTML = `⚠️ ${res?.message || 'Chưa sẵn sàng. Hãy đảm bảo dự án Flow đang mở!'}`;
+      showToast(res?.message || 'Chưa sẵn sàng', 'warning');
+    }
+  } catch (err) {
+    DOM.badgeStep3.textContent = '✗ Lỗi';
+    DOM.badgeStep3.className = 'badge badge-danger';
+    showToast('Lỗi gắn nhân vật: ' + err.message, 'error');
+    DOM.stepWorkflowMsg.innerHTML = `✗ Lỗi gắn nhân vật: ${err.message}`;
+    logToConsole('Lỗi gắn nhân vật: ' + err.message, 'error');
+  } finally {
+    DOM.btnStepSetupCharacter.disabled = false;
+    DOM.btnStepSetupCharacter.textContent = '🎭 Bấm Gắn Nhân Vật';
+  }
+}
+
+// BƯỚC 4: Tạo phân cảnh 1 (hoặc cảnh chỉ định)
+async function handleStep4RenderScene(sceneNumber = 1) {
+  const scene = state.project.scenes.find(s => s.number === sceneNumber) || state.project.scenes[0];
+  if (!scene) {
+    showToast('Chưa có phân cảnh nào trong Storyboard', 'error');
+    return;
+  }
+
+  DOM.btnStepRenderScene1.disabled = true;
+  DOM.btnStepRenderScene1.textContent = '⏳ Đang tạo...';
+  DOM.badgeStep4.textContent = `Đang tạo Cảnh #${scene.number}...`;
+  DOM.badgeStep4.className = 'badge badge-info pulse-dot';
+  DOM.stepWorkflowMsg.innerHTML = `⚡ Đang tự động điền prompt, chọn Video và bấm Tạo cho <strong>Cảnh #${scene.number} (${scene.title})</strong>...`;
+
+  try {
+    await processSceneGeneration(scene);
+    DOM.badgeStep4.textContent = `✓ Đã gửi Cảnh #${scene.number}`;
+    DOM.badgeStep4.className = 'badge badge-success';
+    DOM.stepWorkflowMsg.innerHTML = `✓ <strong>Cảnh #${scene.number} đã bấm Tạo thành công trên Google Flow!</strong> Bạn có thể theo dõi trên màn hình Chrome hoặc bấm <strong>"▶️ Tạo Cảnh Kế"</strong>.`;
+    renderScenesGrid();
+    renderQueueTable();
+    updateStats();
+  } catch (err) {
+    DOM.badgeStep4.textContent = '✗ Lỗi';
+    DOM.badgeStep4.className = 'badge badge-danger';
+    DOM.stepWorkflowMsg.innerHTML = `✗ Lỗi tạo cảnh: ${err.message}`;
+    showToast(`Lỗi tạo Cảnh #${scene.number}: ` + err.message, 'error');
+  } finally {
+    DOM.btnStepRenderScene1.disabled = false;
+    DOM.btnStepRenderScene1.textContent = '⚡ Thử Tạo Cảnh 1';
+  }
+}
+
+// BƯỚC 4 Tiếp theo: Tạo cảnh kế tiếp
+async function handleStep4RenderNextScene() {
+  const nextScene = state.project.scenes.find(s => s.status !== 'completed' && s.status !== 'generating') || state.project.scenes[0];
+  if (!nextScene) {
+    showToast('Tất cả các phân cảnh đã hoàn thành!', 'success');
+    return;
+  }
+
+  DOM.btnStepRenderNext.disabled = true;
+  DOM.btnStepRenderNext.textContent = '⏳ Đang gửi...';
+  DOM.stepWorkflowMsg.innerHTML = `⚡ Đang tiến hành tạo <strong>Cảnh #${nextScene.number} (${nextScene.title})</strong>...`;
+
+  try {
+    await processSceneGeneration(nextScene);
+    DOM.badgeStep4.textContent = `✓ Đã gửi Cảnh #${nextScene.number}`;
+    DOM.badgeStep4.className = 'badge badge-success';
+    DOM.stepWorkflowMsg.innerHTML = `✓ <strong>Đã bấm Tạo Cảnh #${nextScene.number}!</strong>`;
+    renderScenesGrid();
+    renderQueueTable();
+    updateStats();
+  } catch (err) {
+    showToast(`Lỗi Cảnh #${nextScene.number}: ` + err.message, 'error');
+  } finally {
+    DOM.btnStepRenderNext.disabled = false;
+    DOM.btnStepRenderNext.textContent = '▶️ Tạo Cảnh Kế';
+  }
 }
 
 // Build full prompt with Character DNA
@@ -754,6 +1072,24 @@ function renderScenesGrid() {
         <textarea class="scene-prompt-textarea" data-field="prompt" data-id="${scene.id}" placeholder="Mô tả phân cảnh chi tiết...">${scene.prompt}</textarea>
       </div>
 
+      <!-- Voiceover Narration Box (Giọng Nam Tiếng Việt) -->
+      <div class="scene-voiceover-box">
+        <div class="voiceover-header">
+          <div class="voice-badge">
+            <span>🎙️ Lời Thoại Thuyết Minh (${scene.voiceGender || 'Nam Tiếng Việt'}):</span>
+          </div>
+          <div class="voice-actions">
+            <button type="button" class="btn-icon-xs btn-speak-voiceover" data-id="${scene.id}" title="Nghe thử giọng đọc nam tiếng Việt">
+              🔊 Nghe Đọc
+            </button>
+            <button type="button" class="btn-icon-xs btn-copy-voiceover" data-id="${scene.id}" title="Sao chép lời thoại thuyết minh">
+              📋 Copy Lời
+            </button>
+          </div>
+        </div>
+        <textarea class="scene-voiceover-textarea" data-field="voiceover" data-id="${scene.id}" placeholder="Lời thoại thuyết minh bằng giọng nam tiếng Việt cho cảnh này...">${scene.voiceover || ''}</textarea>
+      </div>
+
       <!-- Reference Image for Scene -->
       <div class="scene-media-area">
         <img class="scene-image-preview-thumb" src="${scene.referenceImageDataUrl || (state.project.characterProfile.referenceImageDataUrl || '')}" alt="Ref" style="${(!scene.referenceImageDataUrl && !state.project.characterProfile.referenceImageDataUrl) ? 'display:none;' : ''}">
@@ -797,6 +1133,31 @@ function renderScenesGrid() {
 }
 
 function attachCardEvents() {
+  // Voiceover Speech Synthesis & Copy
+  document.querySelectorAll('.btn-speak-voiceover').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-id');
+      const sc = state.project.scenes.find(s => s.id === id);
+      if (sc && sc.voiceover) {
+        speakVoiceover(sc.voiceover);
+        showToast(`🔊 Đang đọc lời thoại Phân cảnh ${sc.number}...`, 'info');
+      } else {
+        showToast('Chưa có lời thoại thuyết minh cho phân cảnh này', 'warning');
+      }
+    });
+  });
+
+  document.querySelectorAll('.btn-copy-voiceover').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.getAttribute('data-id');
+      const sc = state.project.scenes.find(s => s.id === id);
+      if (sc && sc.voiceover) {
+        await navigator.clipboard.writeText(sc.voiceover);
+        showToast(`✓ Đã copy lời thoại Phân cảnh ${sc.number}!`, 'success');
+      }
+    });
+  });
+
   // Copy full prompt
   document.querySelectorAll('.btn-copy-scene-prompt').forEach(btn => {
     btn.addEventListener('click', async () => {
@@ -1203,24 +1564,29 @@ async function executeAiScriptGeneration() {
   DOM.btnExecuteAiScript.textContent = 'Đang phân rã kịch bản...';
 
   try {
-    logToConsole(`Đang phân rã kịch bản ${count} phân cảnh cho chủ đề: "${topic}"`, 'info');
+    logToConsole(`Đang phân rã kịch bản ${count} phân cảnh cho chủ đề: "${topic}" (Giọng đọc: ${DOM.aiScriptVoice?.options[DOM.aiScriptVoice.selectedIndex]?.text || 'Nam Tiếng Việt'})`, 'info');
     
+    const voiceChoice = DOM.aiScriptVoice?.value || 'male_vi';
     const scenes = await window.electronAPI.generateScenes({
       count,
       topic,
       characterProfile: state.project.characterProfile,
       useAi: engine === 'ai',
-      model: 'gemini-1.5-flash'
+      model: 'gemini-3.1-flash-lite',
+      voiceGender: voiceChoice
     });
 
     if (scenes && scenes.length > 0) {
       state.project.scenes = scenes;
+      if (DOM.projectTitleInput) {
+        DOM.projectTitleInput.value = topic.length > 45 ? topic.slice(0, 45) + '...' : topic;
+      }
       DOM.modalAiScript.style.display = 'none';
       renderScenesGrid();
       renderQueueTable();
       updateStats();
-      showToast(`Đã tự động tạo thành công ${scenes.length} phân cảnh!`, 'success');
-      logToConsole(`✓ Đã nạp ${scenes.length} phân cảnh vào Storyboard`, 'success');
+      showToast(`Đã tự động tạo thành công ${scenes.length} phân cảnh có kèm lời thoại thuyết minh!`, 'success');
+      logToConsole(`✓ Đã nạp ${scenes.length} phân cảnh vào Storyboard kèm lời thoại thuyết minh giọng nam tiếng Việt`, 'success');
     }
   } catch (err) {
     showToast(`Lỗi tạo kịch bản: ${err.message}`, 'error');
@@ -1232,6 +1598,38 @@ async function executeAiScriptGeneration() {
       Phân Rã & Tạo Phân Cảnh Ngay
     `;
   }
+}
+
+// ==================== VIETNAMESE SPEECH SYNTHESIS (VOICEOVER) ==================== //
+function speakVoiceover(text, voiceGender = 'male_vi') {
+  if (!window.speechSynthesis) {
+    showToast('Trình duyệt không hỗ trợ phát giọng nói Web Speech', 'warning');
+    return;
+  }
+
+  // Cancel any ongoing speech
+  window.speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'vi-VN';
+
+  // Find Vietnamese voice in system
+  const voices = window.speechSynthesis.getVoices();
+  const viVoice = voices.find(v => (v.lang && (v.lang.includes('vi') || v.lang.includes('VI'))));
+  if (viVoice) {
+    utterance.voice = viVoice;
+  }
+
+  // Tone tuning for warm, confident male narrator voice
+  if (voiceGender === 'male_vi') {
+    utterance.pitch = 0.88; // Lower, warmer pitch for male narrator
+    utterance.rate = 0.94;  // Moderate, clear cooking pacing
+  } else {
+    utterance.pitch = 1.05;
+    utterance.rate = 0.98;
+  }
+
+  window.speechSynthesis.speak(utterance);
 }
 
 // ==================== SETTINGS MANAGEMENT ==================== //

@@ -106,6 +106,92 @@
         </div>
       </div>
 
+      <!-- ================= STEP-BY-STEP INTERACTIVE WORKFLOW ================= -->
+      <div class="step-workflow-card" id="step-workflow-card">
+        <div class="step-workflow-header">
+          <div class="step-workflow-title">
+            <span class="workflow-badge">LÀM TỪNG BƯỚC RÕ RÀNG</span>
+            <h3>🎯 Quy Trình Tự Động Hóa Google Flow Từng Bước</h3>
+            <span class="workflow-sub">Thực hiện lần lượt từ Bước 1 đến Bước 4 để đảm bảo Chrome sẵn sàng trước khi tạo hàng loạt</span>
+          </div>
+          <div class="step-workflow-status">
+            <button class="btn btn-sm btn-ghost" id="btn-refresh-flow-status" title="Kiểm tra lại kết nối Chrome & Flow">
+              🔄 Kiểm tra kết nối
+            </button>
+            <span class="badge" id="flow-overall-status-badge">Chưa mở Chrome</span>
+          </div>
+        </div>
+
+        <div class="step-workflow-steps">
+          <!-- Step 1: Mở Trình Duyệt -->
+          <div class="workflow-step-box" id="box-step-1">
+            <div class="step-num-badge" id="num-step-1">1</div>
+            <div class="step-content">
+              <div class="step-name">Mở Trình Duyệt</div>
+              <div class="step-desc">Mở Google Chrome thật (lưu đăng nhập vĩnh viễn)</div>
+              <div class="step-action">
+                <button class="btn btn-sm btn-primary" id="btn-step-open-chrome">
+                  🚀 Bấm Mở Trình Duyệt
+                </button>
+                <span class="badge badge-subtle" id="badge-step-1">Chưa mở</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Tạo Dự Án -->
+          <div class="workflow-step-box" id="box-step-2">
+            <div class="step-num-badge" id="num-step-2">2</div>
+            <div class="step-content">
+              <div class="step-name">Tạo Dự Án</div>
+              <div class="step-desc">Tự động bấm "Dự án mới" trên Google Flow</div>
+              <div class="step-action">
+                <button class="btn btn-sm btn-primary" id="btn-step-create-project">
+                  ➕ Bấm Tạo Dự Án
+                </button>
+                <span class="badge badge-subtle" id="badge-step-2">Chờ tạo</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Gắn Hình & Nhân Vật -->
+          <div class="workflow-step-box" id="box-step-3">
+            <div class="step-num-badge" id="num-step-3">3</div>
+            <div class="step-content">
+              <div class="step-name">Gắn Hình & Nhân Vật</div>
+              <div class="step-desc">Gắn ảnh chân dung & đồng bộ thông tin nhân vật</div>
+              <div class="step-action">
+                <button class="btn btn-sm btn-primary" id="btn-step-setup-character">
+                  🎭 Bấm Gắn Nhân Vật
+                </button>
+                <span class="badge badge-subtle" id="badge-step-3">Chờ gắn</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4: Tạo Phân Cảnh -->
+          <div class="workflow-step-box" id="box-step-4">
+            <div class="step-num-badge" id="num-step-4">4</div>
+            <div class="step-content">
+              <div class="step-name">Tạo Phân Cảnh</div>
+              <div class="step-desc">Tự động điền prompt, khóa Video & bấm Tạo</div>
+              <div class="step-action" style="flex-wrap: wrap; gap: 6px;">
+                <button class="btn btn-sm btn-glow-primary" id="btn-step-render-scene-1" style="background: linear-gradient(135deg, #10b981, #2563eb);">
+                  ⚡ Thử Tạo Cảnh 1
+                </button>
+                <button class="btn btn-sm btn-secondary" id="btn-step-render-next">
+                  ▶️ Tạo Cảnh Kế
+                </button>
+                <span class="badge badge-subtle" id="badge-step-4">Sẵn sàng</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-workflow-footer" id="step-workflow-message-bar">
+          <span id="step-workflow-msg">👉 <strong>Bước 1:</strong> Hãy bấm nút <strong>"🚀 Bấm Mở Trình Duyệt"</strong> để mở Google Chrome thật!</span>
+        </div>
+      </div>
+
       <!-- Character Consistency Sticky Banner -->
       <div class="character-sync-bar">
         <div class="sync-left">
@@ -364,16 +450,27 @@
         <button class="modal-close-btn" id="btn-close-modal-script">&times;</button>
       </div>
       <div class="modal-body">
-        <p class="modal-desc">Nhập chủ đề cốt truyện hoặc ý tưởng video. Công cụ sẽ tự động phân rã thành các phân cảnh điện ảnh với góc máy, ánh sáng và hành động nhân vật nhất quán.</p>
+        <p class="modal-desc">Nhập chủ đề video (ví dụ: dạy nấu ăn, phim ngắn, quảng cáo...). AI sẽ tự động phân rã thành các phân cảnh với góc quay, câu lệnh hình ảnh chuẩn 4K và <strong>lời thoại thuyết minh tiếng Việt (Voiceover)</strong>.</p>
         
-        <div class="form-group">
-          <label for="ai-script-topic">Chủ Đề Cốt Truyện / Ý Tưởng Video *</label>
-          <textarea id="ai-script-topic" class="form-control" rows="3" placeholder="VD: Điệp viên thâm nhập vào tòa tháp công nghệ cao trong đêm mưa để thu hồi viên ngọc năng lượng...">Điệp viên truy tìm dữ liệu tuyệt mật tại trung tâm thành phố tương lai rực rỡ ánh đèn neon, đối đầu với hệ thống bảo mật và tẩu thoát thành công.</textarea>
+        <!-- Quick topic pills -->
+        <div style="margin-bottom: 12px;">
+          <span style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 6px;">Gợi ý chủ đề nhanh:</span>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" class="btn btn-sm btn-outline btn-quick-topic" data-topic="Dạy nấu món ăn canh chua cá kho tộ chuẩn vị miền Tây">🍲 Canh Chua Cá Kho Tộ</button>
+            <button type="button" class="btn btn-sm btn-outline btn-quick-topic" data-topic="Hướng dẫn nấu Phở Bò truyền thống Hà Nội nước dùng trong veo thơm nức">🍜 Nấu Phở Bò Truyền Thống</button>
+            <button type="button" class="btn btn-sm btn-outline btn-quick-topic" data-topic="Bí quyết pha Cà Phê Muối béo ngậy đậm đà hương vị Huế">☕ Pha Cà Phê Muối</button>
+            <button type="button" class="btn btn-sm btn-outline btn-quick-topic" data-topic="Điệp viên truy tìm dữ liệu tuyệt mật tại trung tâm thành phố tương lai neon">🚀 Phim Hành Động Viễn Tưởng</button>
+          </div>
         </div>
 
-        <div class="form-row grid-2">
+        <div class="form-group">
+          <label for="ai-script-topic">Chủ Đề Cốt Truyện / Ý Tưởng Video *</label>
+          <textarea id="ai-script-topic" class="form-control" rows="3" placeholder="VD: Dạy nấu món ăn canh chua cá kho tộ chuẩn vị miền Tây...">Dạy nấu món ăn canh chua cá kho tộ chuẩn vị miền Tây đậm đà thơm ngon</textarea>
+        </div>
+
+        <div class="form-row grid-3" style="display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 12px;">
           <div class="form-group">
-            <label for="ai-script-count">Số Lượng Phân Cảnh Cần Tạo</label>
+            <label for="ai-script-count">Số Lượng Phân Cảnh</label>
             <select id="ai-script-count" class="form-control">
               <option value="10" selected>10 Phân Cảnh (Tiêu chuẩn)</option>
               <option value="12">12 Phân Cảnh</option>
@@ -384,8 +481,15 @@
           <div class="form-group">
             <label for="ai-script-engine">Phương Thức Tạo</label>
             <select id="ai-script-engine" class="form-control">
-              <option value="ai">AI Generative (Dùng Gemini AI thông minh)</option>
-              <option value="procedural">Mẫu Kịch Bản Điện Ảnh Tức Thì (Không tốn token)</option>
+              <option value="ai">AI Generative (Dùng Gemini)</option>
+              <option value="procedural">Mẫu Kịch Bản Chuẩn (Tức thì)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="ai-script-voice">Giọng Thuyết Minh</label>
+            <select id="ai-script-voice" class="form-control" style="border-color: #3b82f6;">
+              <option value="male_vi" selected>🎙️ Nam - Tiếng Việt (Trầm ấm)</option>
+              <option value="female_vi">🎙️ Nữ - Tiếng Việt (Truyền cảm)</option>
             </select>
           </div>
         </div>

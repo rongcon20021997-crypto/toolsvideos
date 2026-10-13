@@ -36,8 +36,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.on('flow:video-downloaded', (_, data) => callback(data));
   },
 
-  // Real Google Chrome (Persistent Profile)
+  // Real Google Chrome (Persistent Profile) & Step-by-Step Flow Automation
   launchRealChrome: (url) => ipcRenderer.invoke('chrome:launch-real', url),
   checkChromeAlive: () => ipcRenderer.invoke('chrome:check-alive'),
+  getFlowStatus: () => ipcRenderer.invoke('chrome:get-status'),
+  createFlowProject: () => ipcRenderer.invoke('chrome:create-project'),
+  setupFlowCharacter: (characterData) => ipcRenderer.invoke('chrome:setup-character', characterData),
   injectPromptToChrome: (prompt) => ipcRenderer.invoke('chrome:inject-prompt', prompt)
 });
